@@ -55,7 +55,10 @@ public class App {
         FileController fileController = new FileController(fileService);
         SecurityController securityController = new SecurityController(userSecurityService);
 
-        var app = Javalin.create()
+        var app = Javalin.create(config -> {
+            config.staticFiles.add("/public");
+            config.http.maxRequestSize = 100 * 1024 * 1024L;
+                })
                 .post("/api/login", securityController::handleAuth)
                 .post("/api/register", securityController::handleRegistration)
                 .post("/api/logout", securityController::handleLogout)

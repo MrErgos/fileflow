@@ -7,6 +7,8 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.UnauthorizedResponse;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public record SecurityController(UserSecurityService userSecurityService) {
     public void handleSession(@NotNull Context context) {
         String login = context.sessionAttribute("currentUser");
@@ -41,6 +43,16 @@ public record SecurityController(UserSecurityService userSecurityService) {
             userSecurityService.registerUser(login, password);
             context.sessionAttribute("currentUser", login);
             context.status(HttpStatus.OK).result("Success");
+        }
+    }
+
+    public void handleGetCurrentUser(@NotNull Context context) {
+        String login = context.sessionAttribute("currentUser");
+
+        if (login != null) {
+            context.json(Map.of("login", login));
+        } else {
+            context.status(HttpStatus.UNAUTHORIZED);
         }
     }
 }

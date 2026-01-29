@@ -1,4 +1,18 @@
 const apiUrl = '/api/'
+window.addEventListener('DOMContentLoaded', () => {
+    fetch(apiUrl + 'me')
+        .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('Unauthorized')
+        })
+        .then(data => {
+            showMainSection(data.login);
+        })
+        .catch(reason => {
+            document.getElementById('authSection').style.display = 'block';
+            console.log('Нужно авторизоваться')
+        })
+})
 function auth(type) {
     const loginVal = document.getElementById('login').value;
     const passVal = document.getElementById('password').value;

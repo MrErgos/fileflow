@@ -65,6 +65,7 @@ public class App {
                 .before("/api/upload", securityController::handleSession)
                 .post("/api/upload", fileController::handleUploadFile)
                 .get("/api/download/{id}", fileController::handleDownloadFile)
+                .get("/api/me", securityController::handleGetCurrentUser)
                 .start(port);
     }
 

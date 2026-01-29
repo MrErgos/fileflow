@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>File Cloud</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div id="authSection">
+        <h2>Вход / Регистрация</h2>
+        <input type="text" id="login" placeholder="Логин">
+        <input type="password" id="password" placeholder="Пароль">
+        <div class="buttons">
+            <button onclick="auth('login')">Войти</button>
+            <button onclick="auth('register')">Создать аккаунт</button>
+        </div>
+    </div>
+
+    <div id="mainSection" style="display: none;">
+        <div class="header">
+            <span id="userGreeting"></span>
+            <button onclick="logout()">Выйти</button>
+        </div>
+
+        <div class="upload-box">
+            <input type="file" id="fileInput">
+            <button onclick="uploadFile()">Загрузить файл</button>
+        </div>
+
+        <div id="progressContainer" class="progress-hidden">
+            <div id="progressBar">0%</div>
+        </div>
+
+        <div id="result"></div>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,9 +1,13 @@
 package io.github.mrergos;
 
 import io.github.mrergos.controller.FileController;
+import io.github.mrergos.controller.SecurityController;
 import io.github.mrergos.dao.FileDao;
+import io.github.mrergos.dao.UserDao;
+import io.github.mrergos.service.BCryptUserSecurityService;
 import io.github.mrergos.service.DiskFileService;
 import io.github.mrergos.service.FileService;
+import io.github.mrergos.service.UserSecurityService;
 import io.javalin.Javalin;
 import org.flywaydb.core.Flyway;
 import org.jdbi.v3.core.Jdbi;
@@ -40,15 +44,24 @@ public class App {
 
         Jdbi jdbi = jdbiConfiguration(url);
 
-        FileDao dao = jdbi.onDemand(FileDao.class);
-        FileService fileService = new DiskFileService(dao, properties);
+        FileDao fileDao = jdbi.onDemand(FileDao.class);
+        FileService fileService = new DiskFileService(fileDao, properties);
+
+        UserDao userDao = jdbi.onDemand(UserDao.class);
+        UserSecurityService userSecurityService = new BCryptUserSecurityService(userDao);
 
         schedulerConfiguration(fileService);
 
-        FileController controller = new FileController(fileService);
+        FileController fileController = new FileController(fileService);
+        SecurityController securityController = new SecurityController(userSecurityService);
+
         var app = Javalin.create()
-                .post("/upload", controller::handleUploadFile)
-                .get("/download/{id}", controller::handleDownloadFile)
+                .post("/api/login", securityController::handleAuth)
+                .post("/api/register", securityController::handleRegistration)
+                .post("/api/logout", securityController::handleLogout)
+                .before("/api/upload", securityController::handleSession)
+                .post("/api/upload", fileController::handleUploadFile)
+                .get("/api/download/{id}", fileController::handleDownloadFile)
                 .start(port);
     }
 

@@ -50,8 +50,8 @@ public class DiskFileService implements FileService{
     public FileResponse saveFile(UploadedFile uploadedFile, Long userId) {
         String id = generateFilename();
 
-        try {
-            Files.copy(uploadedFile.content(), rootPath.resolve(id));
+        try (InputStream is = uploadedFile.content()){
+            Files.copy(is, rootPath.resolve(id));
         } catch (IOException e) {
             log.error("Failed to save the file: {}", uploadedFile.filename());
             throw new InternalServerErrorResponse("Failed to save the file");
@@ -61,6 +61,7 @@ public class DiskFileService implements FileService{
             contentType = "application/octet-stream";
         }
         fileDao.insertFile(id, uploadedFile.filename(), id, contentType, uploadedFile.size(), userId);
+
         return new FileResponse(baseUrl + id, uploadedFile.size());
     }
 

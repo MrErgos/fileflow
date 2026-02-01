@@ -10,6 +10,7 @@ public class FileRecordMapper {
                 fileRecord.getContentType(),
                 fileRecord.getFileSize(),
                 fileRecord.getDownloadCount(),
-                fileRecord.getUploadDate());
+                fileRecord.getUploadDate(),
+                fileRecord.getLastAccessedAt());
     }
 }

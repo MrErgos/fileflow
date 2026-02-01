@@ -27,7 +27,7 @@ public record SecurityController(UserSecurityService userSecurityService) {
 
         if (userSecurityService.authUser(login, password)) {
             context.sessionAttribute("currentUser", login);
-            context.sessionAttribute("userId", userSecurityService.findUserByLogin(login));
+            context.sessionAttribute("userId", userSecurityService.findUserByLogin(login).getId());
             context.status(HttpStatus.OK).result("Success");
         } else {
             throw new UnauthorizedResponse("Invalid login or password\nНеверный логин или пароль");

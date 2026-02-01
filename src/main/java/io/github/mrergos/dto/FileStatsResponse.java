@@ -6,5 +6,6 @@ public record FileStatsResponse(
         String contentType,
         Long fileSize,
         Integer downloadCount,
-        String uploadDate) {
+        String uploadDate,
+        String lastAccessAt) {
 }

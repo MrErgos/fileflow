@@ -44,6 +44,9 @@ function auth(type) {
 }
 
 function showMainSection(username) {
+    const container = document.getElementById('appSection');
+    container.classList.add('wide');
+
     document.getElementById('authSection').style.display = 'none';
     document.getElementById('mainSection').style.display = 'block';
     document.getElementById('statsSection').style.display = 'block';
@@ -90,7 +93,12 @@ function uploadFile() {
 }
 
 function logout() {
-    fetch(apiUrl + 'logout', { method: 'POST' }).then(() => location.reload());
+    fetch(apiUrl + 'logout', { method: 'POST' })
+        .then(() => {
+            const container = document.getElementById('appSection');
+            container.classList.remove('wide');
+            location.reload()
+        });
 }
 
 function loadStats() {
@@ -101,17 +109,28 @@ function loadStats() {
             tbody.innerHTML = '';
 
             files.forEach(file => {
+                const uploadDate = file.uploadDate ? formatter.format(new Date(file.uploadDate)) : '-';
+                const lastAccessAt = file.lastAccessAt ? formatter.format(new Date(file.lastAccessAt)) : '-';
+
                 const row = `
                     <tr style="border-bottom: 1px solid #ddd;">
                         <td><a href="${file.url}">${file.originalName}</a></td>
                         <td>${file.contentType}</td>
-                        <td style="padding: 10px;text-align: center;">${file.fileSize}</td>
+                        <td style="text-align: center;">${formatBytes(file.fileSize)}</td>
                         <td style="text-align: center;"><b>${file.downloadCount}</b></td>
-                        <td>${formatter.format(new Date(file.uploadDate))}</td>
-                        <td>${formatter.format(new Date(file.lastAccessAt))}</td>
+                        <td>${uploadDate}</td>
+                        <td>${lastAccessAt}</td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
         });
+}
+
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }

@@ -11,7 +11,13 @@ body {
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
+    transition: max-width 0.4s ease;
+}
+
+.container.wide {
+    max-width: 1200px;
 }
 
 input {
@@ -77,6 +83,26 @@ button:hover {
 #authSection, #mainSection {
     display: none;
 }
-td {
-    padding: 10px;
+
+#statsTable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+#statsTable th {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #eeeeee;
+}
+
+#statsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    word-break: break-word;
+}
+
+#statsTable tr:hover {
+    background-color: #f8f9fa;
 }

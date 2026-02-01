@@ -15,7 +15,7 @@ public interface UserDao {
 
     @SqlUpdate("INSERT INTO users (login, password) VALUES (:login, :password)")
     @GetGeneratedKeys
-    long save(@BindBean User user);
+    Long save(@BindBean User user);
 
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM users WHERE login = :login)")
     boolean existsByLogin(@Bind("login") String login);

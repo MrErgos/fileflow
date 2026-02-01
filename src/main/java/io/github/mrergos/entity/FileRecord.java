@@ -9,18 +9,22 @@ public final class FileRecord {
     private String contentType;
     private Long fileSize;
     private Integer downloadCount;
+    private Long userId;
+    private String uploadDate;
     private String lastAccessedAt;
 
     public FileRecord() {
     }
 
-    public FileRecord(String id, String originalName, String path, String contentType, Long fileSize, Integer downloadCount, String lastAccessedAt) {
+    public FileRecord(String id, String originalName, String path, String contentType, Long fileSize, Integer downloadCount, Long userId, String uploadDate, String lastAccessedAt) {
         this.id = id;
         this.originalName = originalName;
         this.path = path;
         this.contentType = contentType;
         this.fileSize = fileSize;
         this.downloadCount = downloadCount;
+        this.userId = userId;
+        this.uploadDate = uploadDate;
         this.lastAccessedAt = lastAccessedAt;
     }
 
@@ -80,14 +84,30 @@ public final class FileRecord {
         this.lastAccessedAt = lastAccessedAt;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(String uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof FileRecord that)) return false;
-        return Objects.equals(id, that.id) && Objects.equals(originalName, that.originalName) && Objects.equals(path, that.path) && Objects.equals(contentType, that.contentType) && Objects.equals(fileSize, that.fileSize) && Objects.equals(downloadCount, that.downloadCount) && Objects.equals(lastAccessedAt, that.lastAccessedAt);
+        return Objects.equals(id, that.id) && Objects.equals(originalName, that.originalName) && Objects.equals(path, that.path) && Objects.equals(contentType, that.contentType) && Objects.equals(fileSize, that.fileSize) && Objects.equals(downloadCount, that.downloadCount) && Objects.equals(userId, that.userId) && Objects.equals(uploadDate, that.uploadDate) && Objects.equals(lastAccessedAt, that.lastAccessedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, originalName, path, contentType, fileSize, downloadCount, lastAccessedAt);
+        return Objects.hash(id, originalName, path, contentType, fileSize, downloadCount, userId, uploadDate, lastAccessedAt);
     }
 }

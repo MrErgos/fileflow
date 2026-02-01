@@ -13,7 +13,7 @@ public record SecurityController(UserSecurityService userSecurityService) {
     public void handleSession(@NotNull Context context) {
         String login = context.sessionAttribute("currentUser");
         if (login == null) {
-            throw new UnauthorizedResponse("To upload files login is required");
+            throw new UnauthorizedResponse("To upload files login is required\nДля загрузки файлов требуется вход в систему");
         }
     }
 
@@ -27,9 +27,10 @@ public record SecurityController(UserSecurityService userSecurityService) {
 
         if (userSecurityService.authUser(login, password)) {
             context.sessionAttribute("currentUser", login);
+            context.sessionAttribute("userId", userSecurityService.findUserByLogin(login));
             context.status(HttpStatus.OK).result("Success");
         } else {
-            throw new UnauthorizedResponse("Invalid login or password");
+            throw new UnauthorizedResponse("Invalid login or password\nНеверный логин или пароль");
         }
     }
 
@@ -38,10 +39,11 @@ public record SecurityController(UserSecurityService userSecurityService) {
         String password = context.formParam("password");
 
         if (userSecurityService.userExists(login)) {
-            throw new BadRequestResponse("User is already exist");
+            throw new BadRequestResponse("User is already exist\nПользователь уже существует");
         } else {
-            userSecurityService.registerUser(login, password);
+            Long userId = userSecurityService.registerUser(login, password);
             context.sessionAttribute("currentUser", login);
+            context.sessionAttribute("userId", userId);
             context.status(HttpStatus.OK).result("Success");
         }
     }

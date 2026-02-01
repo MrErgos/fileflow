@@ -3,7 +3,9 @@ package io.github.mrergos.service;
 import io.github.mrergos.dao.FileDao;
 import io.github.mrergos.dto.FileDownloadResponse;
 import io.github.mrergos.dto.FileResponse;
+import io.github.mrergos.dto.FileStatsResponse;
 import io.github.mrergos.entity.FileRecord;
+import io.github.mrergos.mapper.FileRecordMapper;
 import io.javalin.http.InternalServerErrorResponse;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.UploadedFile;
@@ -45,7 +47,7 @@ public class DiskFileService implements FileService{
     }
 
     @Override
-    public FileResponse saveFile(UploadedFile uploadedFile) {
+    public FileResponse saveFile(UploadedFile uploadedFile, Long userId) {
         String id = generateFilename();
 
         try {
@@ -58,7 +60,7 @@ public class DiskFileService implements FileService{
         if (contentType == null || contentType.isBlank()) {
             contentType = "application/octet-stream";
         }
-        fileDao.insertFile(id, uploadedFile.filename(), id, contentType, uploadedFile.size());
+        fileDao.insertFile(id, uploadedFile.filename(), id, contentType, uploadedFile.size(), userId);
         return new FileResponse(baseUrl + id, uploadedFile.size());
     }
 
@@ -66,14 +68,14 @@ public class DiskFileService implements FileService{
     public FileDownloadResponse getFileForDownload(String id) {
         FileRecord file = fileDao.findFile(id);
         if (file == null) {
-            throw new NotFoundResponse("There is no such file like " + id);
+            throw new NotFoundResponse("There is no such file like " + id + "\nТакого файла нет.");
         }
         fileDao.updateFileMeta(id);
 
         Path filePath = rootPath.resolve(file.getPath()).normalize();
 
         if (!filePath.startsWith(rootPath)) {
-            throw new InternalServerErrorResponse("Path traversal attempt detected");
+            throw new InternalServerErrorResponse("Path traversal attempt detected\nОбнаружена попытка перехода по пути");
         }
 
         try {
@@ -82,7 +84,7 @@ public class DiskFileService implements FileService{
             return new FileDownloadResponse(is, file.getOriginalName(), contentType);
         } catch (IOException e) {
             log.error("Failed to read the file: {}", file.getId());
-            throw new InternalServerErrorResponse("Error reading file");
+            throw new InternalServerErrorResponse("Error reading file\nОшибка при чтении файла");
         }
     }
 
@@ -108,6 +110,13 @@ public class DiskFileService implements FileService{
         fileDao.deleteFiles(deletedFiles);
 
         log.info("Cleanup finished. Deleted {} records", deletedFiles.size());
+    }
+
+    @Override
+    public List<FileStatsResponse> getUserFiles(Long userId) {
+        return fileDao.findUserFiles(userId).stream()
+                .map(fileRecord -> FileRecordMapper.toFileStatsResponse(fileRecord, baseUrl))
+                .toList();
     }
 
 }

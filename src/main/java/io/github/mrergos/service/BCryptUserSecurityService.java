@@ -19,20 +19,25 @@ public class BCryptUserSecurityService implements UserSecurityService {
     }
 
     @Override
-    public void registerUser(String login, String password) {
+    public Long registerUser(String login, String password) {
         if (login.isBlank() || login.length() > 15 || !login.matches("^[a-zA-Z0-9]+$")) {
-            throw new BadRequestResponse("Login must contain only Alphabet symbols or digits and be from 1 to 15 characters");
+            throw new BadRequestResponse("Login must contain only Alphabet symbols or digits and be from 1 to 15 characters\nЛогин должен содержать только буквы или цифры и состоять из 1–15 символов.");
         } else {
             if (!password.matches("^[a-zA-Z0-9%$*]{6,20}$")) {
-                throw new BadRequestResponse("Password must contain only Alphabet symbols or digits or Special symbols and be from 6 to 20 characters");
+                throw new BadRequestResponse("Password must contain only Alphabet symbols or digits or Special symbols and be from 6 to 20 characters.\n Пароль должен содержать только буквы, цифры или специальные символы и состоять из 6–20 символов.");
             }
             String hashedPassword = BCrypt.hashpw(password,BCrypt.gensalt());
-            userDao.save(new User(login, hashedPassword));
+            return userDao.save(new User(login, hashedPassword));
         }
     }
 
     @Override
     public boolean userExists(String login) {
         return userDao.existsByLogin(login);
+    }
+
+    @Override
+    public User findUserByLogin(String login) {
+        return userDao.findUserByLogin(login);
     }
 }

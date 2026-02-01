@@ -29,7 +29,9 @@ function auth(type) {
             if (res.ok) {
                 showMainSection(loginVal);
             } else {
-                alert("Ошибка: " + res.statusText);
+                return res.text().then(errorMessage => {
+                    alert("Ошибка: " + errorMessage);
+                });
             }
         });
 }

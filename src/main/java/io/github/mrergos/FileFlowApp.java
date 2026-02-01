@@ -24,13 +24,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class App {
+public class FileFlowApp {
 
-    private static final Logger log = LoggerFactory.getLogger(App.class);
+    private static final Logger log = LoggerFactory.getLogger(FileFlowApp.class);
 
     public static void main(String[] args) {
-        App app = new App();
-        app.run();
+        FileFlowApp fileFlowApp = new FileFlowApp();
+        fileFlowApp.run();
     }
 
     public void run() {
@@ -74,7 +74,7 @@ public class App {
     private static Properties getProperties() {
         Properties properties = new Properties();
 
-        try (InputStream is = App.class.getClassLoader().getResourceAsStream("properties.properties")) {
+        try (InputStream is = FileFlowApp.class.getClassLoader().getResourceAsStream("properties.properties")) {
             if (is == null) {
                 log.error("properties.properties was not found");
                 return null;

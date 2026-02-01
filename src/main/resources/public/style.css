@@ -77,3 +77,6 @@ button:hover {
 #authSection, #mainSection {
     display: none;
 }
+td {
+    padding: 10px;
+}

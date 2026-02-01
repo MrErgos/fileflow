@@ -1,4 +1,11 @@
 const apiUrl = '/api/'
+const formatter = new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+})
 window.addEventListener('DOMContentLoaded', () => {
     fetch(apiUrl + 'me')
         .then(res => {
@@ -39,7 +46,10 @@ function auth(type) {
 function showMainSection(username) {
     document.getElementById('authSection').style.display = 'none';
     document.getElementById('mainSection').style.display = 'block';
+    document.getElementById('statsSection').style.display = 'block';
     document.getElementById('userGreeting').innerText = "Привет, " + username;
+
+    loadStats();
 }
 
 function uploadFile() {
@@ -69,6 +79,7 @@ function uploadFile() {
         if (xhr.status === 200) {
             const data = JSON.parse(xhr.responseText);
             document.getElementById('result').innerHTML = `Ссылка: <a href="${data.location}" target="_blank">${data.location}</a>`;
+            loadStats();
         } else {
             alert("Ошибка загрузки!");
         }
@@ -80,4 +91,27 @@ function uploadFile() {
 
 function logout() {
     fetch(apiUrl + 'logout', { method: 'POST' }).then(() => location.reload());
+}
+
+function loadStats() {
+    fetch(apiUrl + 'stats')
+        .then(res => res.json())
+        .then(files => {
+            const tbody = document.getElementById('statsBody');
+            tbody.innerHTML = '';
+
+            files.forEach(file => {
+                const row = `
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td><a href="${file.url}">${file.originalName}</a></td>
+                        <td>${file.contentType}</td>
+                        <td style="padding: 10px;text-align: center;">${file.fileSize}</td>
+                        <td style="text-align: center;"><b>${file.downloadCount}</b></td>
+                        <td>${formatter.format(new Date(file.uploadDate))}</td>
+                        <td>${formatter.format(new Date(file.lastAccessAt))}</td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        });
 }
